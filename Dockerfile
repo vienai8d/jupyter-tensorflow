@@ -9,14 +9,19 @@ RUN pip3 install -U pip \
 #
 # Setup nbextensions.
 #
-RUN pip3 install jupyter_contrib_nbextensions \
- && jupyter contrib nbextension install --system \
- && jupyter nbextensions_configurator enable --system
 
-#
-# Setup vim_binding.
-#
+# Installation of nbextensions.
+RUN pip3 install jupyter_contrib_nbextensions
+
+# Installation of vim binding.
 RUN git clone https://github.com/lambdalisue/jupyter-vim-binding vim_binding \
  && chmod 755 -R vim_binding \
- && mv vim_binding /usr/local/share/jupyter/nbextensions \
- && jupyter nbextension enable vim_binding/vim_binding --system
+ && mv vim_binding /usr/local/share/jupyter/nbextensions
+
+COPY custom  /.jupyter/custom
+
+# Configuration of nbextensions.
+RUN jupyter contrib nbextension install --system \
+ && jupyter nbextensions_configurator enable --system \
+ && jupyter nbextension enable vim_binding/vim_binding --system \
+ && jupyter nbextension enable codemirror_mode_extensions/main --system
